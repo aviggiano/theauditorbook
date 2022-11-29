@@ -22,14 +22,14 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function pad2(value: number): string {
-  return value.toString().padStart(2, "0");
-}
-
-export default async function main(dir: string): Promise<void> {
-  log.info("save-book-content-to-disk start");
+export default async function main(filename: string): Promise<void> {
+  log.info(`save-book-content-to-disk '${filename}' start`);
   await connect();
-  const audits = await database.manager.find(Audit);
+  const audits = await database.manager.find(Audit, {
+    order: {
+      name: "ASC",
+    },
+  });
 
   log.debug(`Found ${audits.length} audits`);
 
@@ -49,9 +49,9 @@ export default async function main(dir: string): Promise<void> {
 
     if (findings.length === 0) continue;
 
-    await fs.writeFile(`${dir}/${audit.name}-${pad2(0)}.md`, `# ${audit.name}`);
+    await fs.appendFile(filename, `# ${audit.name}\n`);
     await Promise.all(
-      findings.sort(sortBySeverity).map(async (finding, index) => {
+      findings.sort(sortBySeverity).map(async (finding) => {
         const content = [
           `## [${finding.title} (${capitalize(finding.severity)})](${finding.url
             .replace("api.", "")
@@ -61,16 +61,14 @@ export default async function main(dir: string): Promise<void> {
             .split("\n")
             .map((line) => line.replace(/^#/g, "###"))
             .join("\n"),
+          "\n",
         ].join("");
-        await fs.writeFile(
-          `${dir}/${audit.name}-${pad2(index + 1)}.md`,
-          content
-        );
+        await fs.appendFile(filename, content);
       })
     );
   }
 
-  log.info("save-book-content-to-disk end");
+  log.info(`save-book-content-to-disk '${filename}' end`);
 }
 
 main(process.argv[2]);

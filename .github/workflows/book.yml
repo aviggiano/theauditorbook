@@ -31,12 +31,9 @@ jobs:
       id: book
       working-directory: ./backend
       run: |
-        mkdir ./theauditorbook
-        yarn save-book-content-to-disk ./theauditorbook
-        echo "files=$(printf '"%s" ' ./theauditorbook/*.md)" >> $GITHUB_ENV
-        echo "total=$(ls ./theauditorbook/*.md | wc -l)" >> $GITHUB_ENV
+        yarn save-book-content-to-disk 'The Auditor Book.md'
+        echo "total=$(grep -c '^# ' 'The Auditor Book.md')" >> $GITHUB_ENV
         echo "date=$(date +%F)" >> $GITHUB_ENV
-        mv ./theauditorbook ../
     - name: Generate book
       uses: docker://pandoc/core:2.9
       with:
@@ -51,7 +48,7 @@ jobs:
           --number-sections
           --standalone
           --from markdown-yaml_metadata_block
-          ${{ env.files }}
+          "The Auditor Book.md"
           +RTS -K512M -RTS
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
