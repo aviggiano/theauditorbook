@@ -28,28 +28,17 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     - name: Save book content to disk
-      id: book
       working-directory: ./backend
       run: |
         yarn save-book-content-to-disk 'The Auditor Book.md'
         echo "total=$(grep -c '^# ' 'The Auditor Book.md')" >> $GITHUB_ENV
-        echo "date=$(date +%F)" >> $GITHUB_ENV
+    - name: Install pandoc
+      working-directory: ./backend
+      run: |
+        sudo apt-get install pandoc
     - name: Generate book
-      uses: docker://pandoc/core:2.9
-      with:
-        args: >-
-          --output "The Auditor Book.epub"
-          --metadata creator="Compiled by aviggiano.eth"
-          --metadata title="The Auditor Book"
-          --metadata description="The Auditor Book is a compilation of high and medium-severity findings from Code4rena & Sherlock"
-          --metadata date="${{ env.date }}"
-          --metadata cover-image="backend/cover.png"
-          --toc
-          --number-sections
-          --standalone
-          --from markdown-yaml_metadata_block
-          "./backend/The Auditor Book.md"
-          +RTS -K512M -RTS
+      working-directory: ./backend
+      run: yarn generate-epub-from-md 'The Auditor Book.md'
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:

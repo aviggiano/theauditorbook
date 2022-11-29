@@ -1,21 +1,17 @@
-import mkdirp from "mkdirp";
 import cmd from "./cmd";
 import { Logger } from "tslog";
 import { format } from "date-fns";
 const log = new Logger();
 
-export default async function main(): Promise<void> {
-  log.info("generate-ebook start");
+export default async function main(filename: string): Promise<void> {
+  log.info(`generate-ebook '${filename}' start`);
 
   const date = format(new Date(), "yyyy-MM-dd");
-  const title = "The Auditor Book";
-  const dir = `/tmp/theauditorbook`;
-  await mkdirp(dir);
 
   await cmd(
-    `pandoc -o '${title}.epub' \\
+    `pandoc -o 'The Auditor Book.epub' \\
     --metadata creator="Compiled by aviggiano.eth"  \\
-    --metadata title="${title}" \\
+    --metadata title="The Auditor Book" \\
     --metadata description="The Auditor Book is a compilation of high and medium-severity findings from Code4rena & Sherlock" \\
     --metadata date="${date}" \\
     --metadata cover-image="cover.png" \\
@@ -23,10 +19,10 @@ export default async function main(): Promise<void> {
     --number-sections \\
     --standalone \\
     --from markdown-yaml_metadata_block \\
-    ${dir}/*.md`
+    ${filename}`
   );
 
-  log.info("generate-ebook end");
+  log.info(`generate-ebook '${filename}' end`);
 }
 
-main();
+main(process.argv[2]);
