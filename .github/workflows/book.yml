@@ -32,24 +32,31 @@ jobs:
       run: |
         yarn save-book-content-to-disk theauditorbook.md
         echo "total=$(grep -c '^# ' theauditorbook.md)" >> $GITHUB_ENV
-    - name: Install pandoc
+    - name: Install pandoc, calibre
       working-directory: ./backend
       run: |
-        sudo apt-get install pandoc
+        sudo apt-get install pandoc calibre
     - name: Generate book
       working-directory: ./backend
       run: |
         yarn generate-from-md-to-epub theauditorbook.md theauditorbook.epub
         mv theauditorbook.epub ..
+    - name: Convert epub to mobi
+      run: |
+        ebook-convert theauditorbook.epub theauditorbook.mobi
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:
         name: v0.${{ env.total }}
         tag_name: v0.${{ env.total }}
-        files: theauditorbook.epub
+        files: |
+          theauditorbook.epub
+          theauditorbook.mobi
     - name: Update latest release
       uses: softprops/action-gh-release@v1
       with:
         name: latest
         tag_name: latest
-        files: theauditorbook.epub
+        files: |
+          theauditorbook.epub
+          theauditorbook.mobi
