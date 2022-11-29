@@ -57,4 +57,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         name: v0.${{ env.total }}
-        tag: v0.${{ env.total }}
+        tag_name: v0.${{ env.total }}
+        files: "The Auditor Book.epub"
