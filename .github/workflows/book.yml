@@ -47,3 +47,9 @@ jobs:
         name: v0.${{ env.total }}
         tag_name: v0.${{ env.total }}
         files: theauditorbook.epub
+    - name: Update latest release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: latest
+        tag_name: latest
+        files: theauditorbook.epub
