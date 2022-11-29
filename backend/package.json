@@ -1,0 +1,52 @@
+{
+  "name": "theauditorbook",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "repository": "git@github.com:aviggiano/theauditorbook.git",
+  "license": "MIT",
+  "scripts": {
+    "local": "serverless invoke local --function",
+    "logs": "serverless logs --tail --function",
+    "generate-ebook": "yarn ts-node src/functions/generate-ebook",
+    "build": "tsc",
+    "get-secrets": "aws secretsmanager get-secret-value --region us-east-1 --secret-id .env | jq --raw-output '.SecretString' > .env",
+    "put-secrets": "aws secretsmanager put-secret-value --region us-east-1 --secret-id .env --secret-string file://.env"
+  },
+  "dependencies": {
+    "@octokit/rest": "^19.0.5",
+    "axios": "^0.27.2",
+    "date-fns": "^2.29.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "fluffy-waddle-database": "^0.2.1",
+    "minimist": "^1.2.6",
+    "mkdirp": "^1.0.4",
+    "node-html-parser": "^5.4.2",
+    "pg": "^8.8.0",
+    "pg-native": "^3.0.1",
+    "ra-data-json-server": "^4.3.3",
+    "tslog": "^3.3.4",
+    "typeorm": "^0.3.9"
+  },
+  "devDependencies": {
+    "@serverless/typescript": "^2.23.0",
+    "@types/aws-lambda": "^8.10.71",
+    "@types/express": "^4.17.13",
+    "@types/mkdirp": "^1.0.2",
+    "@types/node": "^18.7.7",
+    "esbuild": "^0.14.11",
+    "eslint": "8.23.1",
+    "json-schema-to-ts": "^1.5.0",
+    "serverless": "^2.23.0",
+    "serverless-dotenv-plugin": "^4.0.2",
+    "serverless-esbuild": "^1.23.3",
+    "serverless-plugin-typescript": "^2.1.2",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "4.8.3"
+  },
+  "engines": {
+    "node": "^16.14.2",
+    "yarn": "^1.22.10"
+  }
+}
