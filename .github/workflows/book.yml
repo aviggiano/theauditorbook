@@ -52,6 +52,7 @@ jobs:
           --standalone
           --from markdown-yaml_metadata_block
           ${{ env.files }}
+          +RTS -K512M -RTS
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:
