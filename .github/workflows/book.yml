@@ -32,9 +32,9 @@ jobs:
       working-directory: ./backend
       run: |
         yarn save-book-content-to-disk
-        echo "files=$(printf '"%s" ' /tmp/theauditorbook/*.md)" >> $GITHUB_STATE
-        echo "total=$(ls /tmp/theauditorbook/*.md | wc -l)" >> $GITHUB_STATE
-        echo "date=$(date +%F)" >> $GITHUB_STATE
+        echo "files=$(printf '"%s" ' /tmp/theauditorbook/*.md)" >> $GITHUB_ENV
+        echo "total=$(ls /tmp/theauditorbook/*.md | wc -l)" >> $GITHUB_ENV
+        echo "date=$(date +%F)" >> $GITHUB_ENV
     - name: Generate book
       uses: docker://pandoc/core:2.9
       with:
@@ -43,14 +43,15 @@ jobs:
           --metadata creator="Compiled by aviggiano.eth"
           --metadata title="The Auditor Book"
           --metadata description="The Auditor Book is a compilation of high and medium-severity findings from Code4rena & Sherlock"
-          --metadata date="${{ steps.book.outputs.date }}"
+          --metadata date="${{ env.date }}"
           --metadata cover-image="backend/cover.png"
           --toc
           --number-sections
           --standalone
           --from markdown-yaml_metadata_block
-          ${{ steps.book.outputs.files }}
+          ${{ env.files }}
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:
-        name: v0.${{ steps.book.outputs.total }}
+        name: v0.${{ env.total }}
+        tag: v0.${{ env.total }}
