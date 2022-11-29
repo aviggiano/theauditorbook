@@ -48,7 +48,7 @@ jobs:
           --number-sections
           --standalone
           --from markdown-yaml_metadata_block
-          "The Auditor Book.md"
+          "./backend/The Auditor Book.md"
           +RTS -K512M -RTS
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
