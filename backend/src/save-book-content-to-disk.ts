@@ -1,4 +1,9 @@
-import database, { connect, Audit, Finding } from "fluffy-waddle-database";
+import database, {
+  connect,
+  Audit,
+  Finding,
+  disconnect,
+} from "fluffy-waddle-database";
 import fs from "fs/promises";
 import { Logger } from "tslog";
 import { In } from "typeorm";
@@ -67,6 +72,8 @@ export default async function main(filename: string): Promise<void> {
       })
     );
   }
+
+  await disconnect();
 
   log.info(`save-book-content-to-disk '${filename}' end`);
 }
