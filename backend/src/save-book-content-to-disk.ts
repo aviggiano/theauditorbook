@@ -27,6 +27,15 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function formatUrls(word: string): string {
+  const match = word.match(/.*\/(.*\.sol#.*)\b/);
+  return word.startsWith("http") && match
+    ? `[${match[1]}](${word})`
+    : word.startsWith("http")
+    ? `[${word}](${word})`
+    : word;
+}
+
 export default async function main(filename: string): Promise<void> {
   log.info(`save-book-content-to-disk '${filename}' start`);
   await connect();
@@ -65,6 +74,7 @@ export default async function main(filename: string): Promise<void> {
           finding.body
             .split("\n")
             .map((line) => line.replace(/^#/g, "###"))
+            .map((line) => line.split(" ").map(formatUrls).join(" "))
             .join("\n"),
           "\n",
         ].join("");
