@@ -39,4 +39,4 @@ jobs:
     - name: Deploy serverless
       uses: serverless/github-action@v3.1
       with:
-        args: -c "cd ./backend && serverless deploy"
+        args: -c "cd ./backend && serverless deploy --config serverless.ts"
