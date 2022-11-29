@@ -31,10 +31,12 @@ jobs:
       id: book
       working-directory: ./backend
       run: |
-        yarn save-book-content-to-disk
-        echo "files=$(printf '"%s" ' /tmp/theauditorbook/*.md)" >> $GITHUB_ENV
-        echo "total=$(ls /tmp/theauditorbook/*.md | wc -l)" >> $GITHUB_ENV
+        mkdir ./theauditorbook
+        yarn save-book-content-to-disk ./theauditorbook
+        echo "files=$(printf '"%s" ' ./theauditorbook/*.md)" >> $GITHUB_ENV
+        echo "total=$(ls ./theauditorbook/*.md | wc -l)" >> $GITHUB_ENV
         echo "date=$(date +%F)" >> $GITHUB_ENV
+        mv ./theauditorbook ../
     - name: Generate book
       uses: docker://pandoc/core:2.9
       with:

@@ -1,6 +1,5 @@
 import database, { connect, Audit, Finding } from "fluffy-waddle-database";
 import fs from "fs/promises";
-import mkdirp from "mkdirp";
 import { Logger } from "tslog";
 import { In } from "typeorm";
 
@@ -23,15 +22,16 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export default async function main(): Promise<void> {
+function pad2(value: number): string {
+  return value.toString().padStart(2, "0");
+}
+
+export default async function main(dir: string): Promise<void> {
   log.info("save-book-content-to-disk start");
   await connect();
   const audits = await database.manager.find(Audit);
 
   log.debug(`Found ${audits.length} audits`);
-
-  const dir = `/tmp/theauditorbook`;
-  await mkdirp(dir);
 
   const totalFindings = await database.manager.count(Finding);
   log.debug(`Found ${totalFindings} findings`);
@@ -49,7 +49,7 @@ export default async function main(): Promise<void> {
 
     if (findings.length === 0) continue;
 
-    await fs.writeFile(`${dir}/${audit.name}-${"000"}.md`, `# ${audit.name}`);
+    await fs.writeFile(`${dir}/${audit.name}-${pad2(0)}.md`, `# ${audit.name}`);
     await Promise.all(
       findings.sort(sortBySeverity).map(async (finding, index) => {
         const content = [
@@ -63,7 +63,7 @@ export default async function main(): Promise<void> {
             .join("\n"),
         ].join("");
         await fs.writeFile(
-          `${dir}/${audit.name}-${(index + 1).toString().padStart(3, "0")}.md`,
+          `${dir}/${audit.name}-${pad2(index + 1)}.md`,
           content
         );
       })
@@ -73,4 +73,4 @@ export default async function main(): Promise<void> {
   log.info("save-book-content-to-disk end");
 }
 
-main();
+main(process.argv[2]);
