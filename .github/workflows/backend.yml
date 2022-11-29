@@ -28,15 +28,12 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Get .env
+    - name: Deploy serverless
       working-directory: ./backend
       run: |
         yarn
         yarn get-secrets
+        npx serverless deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    - name: Deploy serverless
-      uses: serverless/github-action@v3.1
-      with:
-        args: -c "cd ./backend && serverless deploy --config serverless.ts"
