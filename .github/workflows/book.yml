@@ -3,7 +3,7 @@ name: book
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '14 * * * *'
+    - cron:  '0 14 * * *'
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
