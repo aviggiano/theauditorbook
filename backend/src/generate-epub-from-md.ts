@@ -19,7 +19,7 @@ export default async function main(filename: string): Promise<void> {
     --number-sections \\
     --standalone \\
     --from markdown-yaml_metadata_block \\
-    ${filename}`
+    '${filename}'`
   );
 
   log.info(`generate-ebook '${filename}' end`);
