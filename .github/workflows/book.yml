@@ -1,0 +1,56 @@
+name: backend
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '14 * * * *'
+
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  ebook:
+    name: Deploy backend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Get secrets
+      working-directory: ./backend
+      run: |
+        yarn
+        yarn get-secrets
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Save book content to disk
+      id: book
+      working-directory: ./backend
+      run: |
+        yarn save-book-content-to-disk
+        echo "::set-output name=files::$(printf '"%s" ' /tmp/auditorbook/*.md)"
+        echo "::set-output name=total::$(ls /tmp/auditorbook/*.md | wc -l)"
+        echo "::set-output name=date::$(date +%F)"
+    - name: Generate book
+      uses: docker://pandoc/core:2.9
+      with:
+        args: >-
+          --output "The Auditor Book.epub"
+          --metadata creator="Compiled by aviggiano.eth"
+          --metadata title="The Auditor Book"
+          --metadata description="The Auditor Book is a compilation of high and medium-severity findings from Code4rena & Sherlock"
+          --metadata date="${{ steps.book.outputs.date }}"
+          --metadata cover-image="backend/cover.png"
+          --toc
+          --number-sections
+          --standalone
+          --from markdown-yaml_metadata_block
+          ${{ steps.book.outputs.files }}
+    - name: Upload book to releases
+      uses: softprops/action-gh-release@v1
+      with:
+        name: v0.${{ steps.book.outputs.total }}

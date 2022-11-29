@@ -1,9 +1,7 @@
 import database, { connect, Audit, Finding } from "fluffy-waddle-database";
 import fs from "fs/promises";
 import mkdirp from "mkdirp";
-import cmd from "../cmd";
 import { Logger } from "tslog";
-import { format } from "date-fns";
 import { In } from "typeorm";
 
 const log = new Logger();
@@ -26,15 +24,13 @@ function capitalize(s: string): string {
 }
 
 export default async function main(): Promise<void> {
-  log.info("generate-ebook start");
+  log.info("save-book-content-to-disk start");
   await connect();
   const audits = await database.manager.find(Audit);
 
   log.debug(`Found ${audits.length} audits`);
 
-  const date = format(new Date(), "yyyy-MM-dd");
-  const title = "The Auditor Book";
-  const dir = `/tmp/the-auditor-book-${date}`;
+  const dir = `/tmp/theauditorbook`;
   await mkdirp(dir);
 
   const totalFindings = await database.manager.count(Finding);
@@ -74,20 +70,7 @@ export default async function main(): Promise<void> {
     );
   }
 
-  await cmd(
-    `pandoc -o '${title}.epub' \\
-    --metadata creator="Compiled by aviggiano.eth"  \\
-    --metadata title="${title}" \\
-    --metadata date="${date}" \\
-    --metadata cover-image="cover.png" \\
-    --toc \\
-    --number-sections \\
-    --standalone \\
-    --from markdown-yaml_metadata_block \\
-    ${dir}/*.md`
-  );
-
-  log.info("generate-ebook end");
+  log.info("save-book-content-to-disk end");
 }
 
 main();

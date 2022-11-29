@@ -7,7 +7,8 @@
   "scripts": {
     "local": "serverless invoke local --function",
     "logs": "serverless logs --tail --function",
-    "generate-ebook": "yarn ts-node src/functions/generate-ebook",
+    "generate-book": "yarn ts-node src/generate-ebook",
+    "save-book-content-to-disk": "yarn ts-node src/save-book-content-to-disk",
     "build": "tsc",
     "get-secrets": "aws secretsmanager get-secret-value --region us-east-1 --secret-id .env | jq --raw-output '.SecretString' > .env",
     "put-secrets": "aws secretsmanager put-secret-value --region us-east-1 --secret-id .env --secret-string file://.env"
