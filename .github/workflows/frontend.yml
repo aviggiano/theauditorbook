@@ -1,4 +1,4 @@
-name: Frontend
+name: frontend
 
 on:
   push:
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy frontend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
         aws-region: us-east-1
     - run: yarn
     - name: Deploy frontend 
-      run: aws s3 cp --recursive frontend/ s3://theauditorbook.com/ && aws cloudfront create-invalidation --distribution-id="$DISTRIBUTION_ID" --paths /\*
+      run: aws s3 sync --delete frontend/ s3://theauditorbook.com/ && aws cloudfront create-invalidation --distribution-id=$DISTRIBUTION_ID --paths /\*
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
