@@ -13,12 +13,12 @@ import { In } from "typeorm";
 const log = new Logger();
 
 export async function main() {
-  log.info("get-findings-code4rena start");
+  log.info("get-findings-sherlock start");
   await connect();
   await database.synchronize();
   const auditor = await database.manager.findOne(Auditor, {
     where: {
-      name: "Code4rena",
+      name: "Sherlock",
     },
   });
 
@@ -26,7 +26,7 @@ export async function main() {
 
   const per_page = 100;
   const API_LIMITS = 5;
-  const org = "code-423n4";
+  const org = "sherlock-audit";
 
   for (let repoPage = 1; ; repoPage++) {
     const repos = await octokit.rest.repos.listForOrg({
@@ -38,7 +38,7 @@ export async function main() {
     log.debug(`${repos.data.length} repos found for ${org}`);
     const auditNames = repos.data
       .map((repo) => repo.name)
-      .filter((name) => name.includes("-findings"));
+      .filter((name) => name.includes("-judging"));
 
     log.debug(`${auditNames.length} audits found for ${org}`);
 
@@ -74,13 +74,13 @@ export async function main() {
 
         log.debug(`${issues.data.length} issues found for ${repo}`);
 
-        const labels = ["sponsor acknowledged", "sponsor confirmed"];
-        const medium = "2 (Med Risk)";
-        const high = "3 (High Risk)";
+        const labels = ["Sponsor Confirmed", "Sponsor Disputed"];
+        const medium = "Medium";
+        const high = "High";
         const issuesFiltered = issues.data
           .map((issue) => ({
             id: issue.id,
-            title: issue.title,
+            title: issue.title.replace(/^(.*) \- (.*)/, "$2"),
             body: issue.body || "",
             url: issue.url,
             state: issue.state,
@@ -127,11 +127,11 @@ export async function main() {
 
   await disconnect();
 
-  log.info("get-findings-code4rena end");
+  log.info("get-findings-sherlock end");
 }
 
 export default {
-  handler: "src/functions/get-findings-code4rena.main",
+  handler: "src/functions/get-findings-sherlock.main",
   maximumRetryAttempts: 0,
   events: [
     {

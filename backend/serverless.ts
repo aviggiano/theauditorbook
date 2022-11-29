@@ -1,6 +1,7 @@
 import type { AWS } from "@serverless/typescript";
 
 import getFindingsCode4rena from "@functions/get-findings-code4rena";
+import getFindingsSherlock from "@functions/get-findings-sherlock";
 
 const serverlessConfiguration: AWS = {
   service: "theauditorbook",
@@ -22,6 +23,7 @@ const serverlessConfiguration: AWS = {
   },
   functions: {
     getFindingsCode4rena,
+    getFindingsSherlock,
   },
   package: { individually: true },
   custom: {
