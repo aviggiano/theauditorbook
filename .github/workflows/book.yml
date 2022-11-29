@@ -30,18 +30,20 @@ jobs:
     - name: Save book content to disk
       working-directory: ./backend
       run: |
-        yarn save-book-content-to-disk 'theauditorbook.md'
-        echo "total=$(grep -c '^# ' 'theauditorbook.md')" >> $GITHUB_ENV
+        yarn save-book-content-to-disk theauditorbook.md
+        echo "total=$(grep -c '^# ' theauditorbook.md)" >> $GITHUB_ENV
     - name: Install pandoc
       working-directory: ./backend
       run: |
         sudo apt-get install pandoc
     - name: Generate book
       working-directory: ./backend
-      run: yarn generate-epub-from-md 'theauditorbook.md'
+      run: |
+        yarn generate-from-md-to-epub theauditorbook.md theauditorbook.epub
+        mv theauditorbook.epub ..
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:
         name: v0.${{ env.total }}
         tag_name: v0.${{ env.total }}
-        files: "The Auditor Book.epub"
+        files: theauditorbook.epub

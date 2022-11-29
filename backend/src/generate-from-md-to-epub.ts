@@ -3,13 +3,13 @@ import { Logger } from "tslog";
 import { format } from "date-fns";
 const log = new Logger();
 
-export default async function main(filename: string): Promise<void> {
-  log.info(`generate-ebook '${filename}' start`);
+export default async function main(md: string, epub: string): Promise<void> {
+  log.info(`generate-from-md-to-epub '${md}' '${epub}' start`);
 
   const date = format(new Date(), "yyyy-MM-dd");
 
   await cmd(
-    `pandoc -o 'The Auditor Book.epub' \\
+    `pandoc -o ${epub} \\
     --metadata creator="Compiled by aviggiano.eth"  \\
     --metadata title="The Auditor Book" \\
     --metadata description="The Auditor Book is a compilation of high and medium-severity findings from Code4rena & Sherlock" \\
@@ -19,10 +19,10 @@ export default async function main(filename: string): Promise<void> {
     --number-sections \\
     --standalone \\
     --from markdown-yaml_metadata_block \\
-    '${filename}'`
+    '${md}'`
   );
 
-  log.info(`generate-ebook '${filename}' end`);
+  log.info(`generate-from-md-to-epub '${md}' '${epub}' end`);
 }
 
-main(process.argv[2]);
+main(process.argv[2], process.argv[3]);
