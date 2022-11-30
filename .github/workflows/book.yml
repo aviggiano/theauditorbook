@@ -35,7 +35,7 @@ jobs:
     - name: Install pandoc, calibre
       working-directory: ./backend
       run: |
-        sudo apt-get install pandoc
+        sudo apt-get install pandoc libegl1 libopengl0
         sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
     - name: Generate book
       working-directory: ./backend
