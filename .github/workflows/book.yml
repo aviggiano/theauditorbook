@@ -41,9 +41,10 @@ jobs:
       run: |
         yarn generate-from-md-to-epub theauditorbook.md theauditorbook.epub
         mv theauditorbook.epub ..
-    - name: Convert epub to mobi
+    - name: Convert epub to mobi, pdf
       run: |
         ebook-convert theauditorbook.epub theauditorbook.mobi
+        ebook-convert theauditorbook.epub theauditorbook.pdf
     - name: Upload book to releases
       uses: softprops/action-gh-release@v1
       with:
@@ -52,6 +53,7 @@ jobs:
         files: |
           theauditorbook.epub
           theauditorbook.mobi
+          theauditorbook.pdf
     - name: Update latest release
       uses: softprops/action-gh-release@v1
       with:
@@ -60,3 +62,4 @@ jobs:
         files: |
           theauditorbook.epub
           theauditorbook.mobi
+          theauditorbook.pdf
