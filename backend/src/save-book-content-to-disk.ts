@@ -63,7 +63,7 @@ export default async function main(filename: string): Promise<void> {
 
     if (findings.length === 0) continue;
 
-    await fs.appendFile(filename, `# ${audit.name}\n`);
+    await fs.appendFile(filename, `# ${audit.name}\n\n`);
     await Promise.all(
       findings.sort(sortBySeverity).map(async (finding) => {
         const content = [
